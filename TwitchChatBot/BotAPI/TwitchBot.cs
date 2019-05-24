@@ -3,14 +3,13 @@ using TwitchChatBot.Module;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+using TwitchChatBot.Core.Result;
 
 namespace TwitchChatBot.BotAPI
 {
     public class TwitchBot
     {
-        TwitchClient client;
-        string ReferentceGames = "";
-
+        public TwitchClient client;
         public TwitchBot()
         {
             ConnectionCredentials credentials = new ConnectionCredentials(Base.CodeConnect.NameBot, Base.CodeConnect.Oauth);
@@ -50,10 +49,94 @@ namespace TwitchChatBot.BotAPI
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             int argpos = 0;
-            if (HasStringPrefix(e.ChatMessage.Message, "$", ref argpos))
+#if DEBUG
+            string symv = "$";
+#else
+            string symv = "!";
+#endif
+
+            if (HasStringPrefix(e.ChatMessage.Message, symv, ref argpos))
             {
-                ConstVaribtls._UserCommandServes.Invoke(argpos, client, e);
-                ConstVaribtls._AdminCommandServers.Invoke(argpos, client, e);
+                var res1 = ConstVaribtls._UserCommandServes.Invoke(argpos, client, e);
+                var res2 = ConstVaribtls._AdminCommandServers.Invoke(argpos, client, e);
+
+                if(res1.Result != ErrorsType.Successful)
+                {
+                    switch (res1.Result)
+                    {
+                        case ErrorsType.ParseFailed:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Неправильные аргументы!");
+                                ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.Unsuccessful:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Unsuccessful");
+                                ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.Exception:
+                            {
+                                ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.UnmetPrecondition:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"{res1.ErrorsMessage}");
+                                ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.BadArgCount:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Не соответсвие кол-ва аргументов функции");
+                                ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage}");
+                                break;
+                            }
+                    }
+                }
+
+                if (res2.Result != ErrorsType.Successful)
+                {
+                    switch (res2.Result)
+                    {
+                        case ErrorsType.ParseFailed:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Неправильные аргументы!");
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}, сообщение: '{e.ChatMessage.Message}'");
+                                break;
+                            }
+                        case ErrorsType.Unsuccessful:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Unsuccessful");
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.Exception:
+                            {
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.UnmetPrecondition:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"{res2.ErrorsMessage}");
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}");
+                                break;
+                            }
+                        case ErrorsType.BadArgCount:
+                            {
+                                ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Не соответсвие кол-ва аргументов функции");
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}");
+                                break;
+                            }
+                    }
+                }
+
+                if(res1.Result == ErrorsType.ObjectNotFound && res2.Result == ErrorsType.ObjectNotFound)
+                {
+                    ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Команда не найдена!");
+                    ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage} : {res2.ErrorsMessage}");
+                }
             }
         }
 

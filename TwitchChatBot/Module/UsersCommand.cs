@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TwitchChatBot.Atribute;
-using TwitchLib.Client.Events;
-using TwitchChatBot.Module;
+using TwitchChatBot.Attribute;
 using TwitchChatBot.Core.Module;
+using TwitchChatBot.Core.Attribute;
 
 namespace TwitchChatBot.Module
 {
     class UsersCommand : CommandContext
     {
-        [Command("discord")]
+        [Command("discord"), OnlyOnBot]
         public void RefDiscord()
         {
             SendMessage($"{Context.Username}, держи, ссылка на дискорд легиона https://discord.gg/C7DUgVd");
         }
 
-        [Command("help")]
+        [Command("help"), OnlyOnBot]
         public void HelpMess()
         {
             string text = "Вот что я сечас умею: \r\n";
@@ -39,7 +34,7 @@ namespace TwitchChatBot.Module
             SendMessage(text);
         }
 
-        [Command("game")]
+        [Command("game"), OnlyOnBot]
         public void Game()
         {
             if (ConstVaribtls.ReferentceGames == "")
@@ -49,13 +44,14 @@ namespace TwitchChatBot.Module
             else SendMessage($"Мы играем в {ConstVaribtls.ReferentceGames}");
         }
 
-        [Command("конфа")]
+        [Command("конфа"), OnlyOnBot]
         public void Konf()
         {
             int day = 0;
             int hour = DateTime.Now.Hour;
             int minut = DateTime.Now.Minute;
-            DayOfWeek weeck = DateTime.Now.DayOfWeek;//закончил на этой идеи 
+            DayOfWeek weeck = DateTime.Now.DayOfWeek;
+
             switch (weeck.ToString())
             {
                 case "Monday":
@@ -114,7 +110,22 @@ namespace TwitchChatBot.Module
                     hour = 24 - Math.Abs(hour) - 1;
                 }
             }
-            client.SendMessage(e.ChatMessage.Channel, $"До конфы осталось {(day == 0 ? "" : $"{day} дней")} {hour}:{minut}");
+
+            string StrockDay = "";
+            if (day >= 5)
+            {
+                StrockDay = $"{day} дней";
+            }
+            else if (day >= 2)
+            {
+                StrockDay = $"{day} дня";
+            }
+            else if (day == 1)
+            {
+                StrockDay = $"{day} день";
+            }
+
+            SendMessage($"До конфы осталось {StrockDay} {hour} часов {minut} минут");
         }
     }
 }

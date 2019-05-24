@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TwitchChatBot.Atribute
+namespace TwitchChatBot.Core.Attribute
 {
-    public class Command : Attribute
+    public class Command : System.Attribute
     {
-        string NameCommand = "";
-
+        public string NameCommand = "";
         public Command(string name)
         {
             NameCommand = name;

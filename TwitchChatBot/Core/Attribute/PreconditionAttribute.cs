@@ -1,11 +1,11 @@
 ﻿using System;
-using TwitchChatBot.Core.Module;
+using TwitchChatBot.Core.Result;
 using TwitchLib.Client.Events;
 
-namespace TwitchChatBot.Core.Atribute
+namespace TwitchChatBot.Core.Attribute
 {
     abstract class PreconditionAttribute : System.Attribute
     {
-        public abstract PreconditionResult CheckPermissionsAsync(OnMessageReceivedArgs e);       
+        public abstract PreconditionResult CheckPermissions(OnMessageReceivedArgs e);       
     }
 }

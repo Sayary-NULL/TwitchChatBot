@@ -5,13 +5,12 @@ using System.Reflection;
 using TwitchLib.Client.Events;
 using TwitchChatBot.Core.Interface;
 using TwitchLib.Client;
-using TwitchChatBot.Core.Atribute;
+using TwitchChatBot.Core.Result;
 
 namespace TwitchChatBot.Core.Module
 {
     public class CommandServes
     {
-        Dictionary<string, System.Reflection.MethodInfo> _methods = new Dictionary<string, System.Reflection.MethodInfo>();
         Type ClassType;
         Object MyClassObject;
 
@@ -26,68 +25,83 @@ namespace TwitchChatBot.Core.Module
             ClassType = typeof(T);
             var constr = ClassType.GetConstructors()[0];
             MyClassObject = constr.Invoke(new object[] { });
-
-            var Atribute = typeof(TwitchChatBot.Atribute.Command);
-
-            foreach (var method in ClassType.GetMethods())
-                foreach (var atr in method.CustomAttributes)
-                    if (Atribute == atr.AttributeType)
-                    {
-                        string namecommand = atr.ConstructorArguments[0].ToString().ToLower();
-                        namecommand = namecommand.Substring(1, namecommand.Length - 2);
-                        _methods.Add(namecommand, method);
-                        break;
-                    }
         }
 
-        public PreconditionResult Invoke(int argpos, TwitchClient cl, OnMessageReceivedArgs e)
+        public ErrorsReturnType Invoke(int argpos, TwitchClient cl, OnMessageReceivedArgs e)
         {
-            if (_methods.Count == 0 || MyClassObject == null || ClassType == null)
-                return PreconditionResult.Unsuccessfully;
+            var CommantAttribute = typeof(TwitchChatBot.Core.Attribute.Command);
+            var AliasAttribute = typeof(TwitchChatBot.Core.Attribute.AliasAttribute);
+            var PrecondAttribute = typeof(TwitchChatBot.Core.Attribute.PreconditionAttribute);
 
             int poz = e.ChatMessage.Message.IndexOf(' ');
             poz = poz < 0 ? e.ChatMessage.Message.Length - 1 : poz - 1;
             string NameMethods = e.ChatMessage.Message.Substring(1, poz).ToLower();
 
-            ((ICommandContext)MyClassObject).SetContext(e, cl);
             List<object> _params;
 
-            foreach (var method in _methods)
-                if (method.Key == NameMethods)
-                {
-                    var param = method.Value.GetParameters();
-                    int count = param.Count();
-                    GetParam(argpos, e.ChatMessage.Message, out _params, method.Value.GetParameters());
-                    if (count == _params.Count)
-                    {
-                        bool res = true;
-                        foreach(var atr in method.Value.GetCustomAttributes())
-                        {
-                            var attribute = atr as TwitchChatBot.Core.Atribute.PreconditionAttribute;//преобразование типов
-                            if (attribute == null)
-                                continue;
-                            PreconditionResult result = attribute.CheckPermissionsAsync(e);
-                            if (result == PreconditionResult.Unsuccessfully)
-                                res &= false;
-                        }
+            foreach (var method in ClassType.GetMethods())
+            {
+                bool CommandName = false;
+                bool AliasName = false;
+                bool PreconditionCon = true;
+                PreconditionResult Presult = new PreconditionResult();
 
-                        if (!res)
-                            return PreconditionResult.Unsuccessfully;
-                        
-                        method.Value.Invoke(MyClassObject, _params.ToArray());
+                foreach (var attrib in method.GetCustomAttributes())
+                {
+                    var type = attrib.GetType();
+                    if(type == CommantAttribute)
+                    {
+                        var at = attrib as TwitchChatBot.Core.Attribute.Command;
+                        if (at.NameCommand == NameMethods)
+                            CommandName |= true;
+                        else CommandName &= false;
                     }
-                    break;
+                    else if(type == AliasAttribute)
+                    {
+                        var at = attrib as TwitchChatBot.Core.Attribute.AliasAttribute;
+                        if (at.NameAlias == NameMethods)
+                            AliasName = true;
+                    }
+                    else if(type.BaseType == PrecondAttribute)
+                    {
+                        PreconditionCon = false;
+                        var at = attrib as TwitchChatBot.Core.Attribute.PreconditionAttribute;
+                        Presult = at.CheckPermissions(e);
+                        if (Presult.res == PreconditionResult.Result.Successfully)
+                            PreconditionCon = true;
+                    }
                 }
 
-            return PreconditionResult.Successfully;
+                if((CommandName || AliasName) && PreconditionCon)
+                {
+                    ErrorsType result = GetParam(argpos, e.ChatMessage.Message, out _params, method.GetParameters());
+                    if (result != ErrorsType.Successful && result != ErrorsType.ObjectNotFound)
+                        return new ErrorsReturnType(ErrorsType.ParseFailed, $"Не соответствие параметров при передаче в функцию. Строка: \"{e.ChatMessage.Message}\"");
+
+                    if (_params.Count == method.GetParameters().Count())
+                    {
+                        ((ICommandContext)MyClassObject).SetContext(e, cl);
+                        method.Invoke(MyClassObject, _params.ToArray());
+                        return new ErrorsReturnType(ErrorsType.Successful, "");
+                    }
+                    else return new ErrorsReturnType(ErrorsType.BadArgCount, $"Не соответсвие кол-ва аргументов функции [{_params.Count}]:[{method.GetParameters().Count()}], сообщение : \"{e.ChatMessage.Message}\"");
+                }
+
+                if(!PreconditionCon && (CommandName || AliasName))
+                {
+                    return new ErrorsReturnType(ErrorsType.UnmetPrecondition, $"{Presult.ErrorResult}'");
+                }
+            }
+
+            return new ErrorsReturnType(ErrorsType.ObjectNotFound, $"Не найдена функция \"{NameMethods}\"");
         }
 
-        private void GetParam(int argpos, string name, out List<object> _params, ParameterInfo[] _methodparams)
+        private ErrorsType GetParam(int argpos, string name, out List<object> _params, ParameterInfo[] _methodparams)
         {
             _params = new List<object>();
 
-            if (name.IndexOf(' ') < 0 || _methodparams.Count() == 0)
-                return;
+            if (_methodparams.Count() == 0)
+                return ErrorsType.Successful;
 
             int endpoz = name.IndexOf(' ');
             endpoz = endpoz < 0 ? name.Length : endpoz + 1;
@@ -114,8 +128,6 @@ namespace TwitchChatBot.Core.Module
                 nextsym = nextsym < 0 ? name.Length : nextsym + 1;
                 string param = name.Substring(endpoz, nextsym != name.Length ? nextsym - 1 : nextsym);
 
-
-
                 switch(_methodparams[i].ParameterType.Name)
                 {
                     case "String":
@@ -132,7 +144,7 @@ namespace TwitchChatBot.Core.Module
                                 i++;
                                 break;
                             }
-                            else throw new Exception("Не совпадают параметры!");
+                            else return ErrorsType.ParseFailed;
                         }
                     case "Int32":
                         {
@@ -142,7 +154,7 @@ namespace TwitchChatBot.Core.Module
                                 i++;
                                 break;
                             }
-                            else throw new Exception("Не совпадают параметры!");
+                            else return ErrorsType.ParseFailed;
                         }
                     case "Int64":
                         {
@@ -152,7 +164,7 @@ namespace TwitchChatBot.Core.Module
                                 i++;
                                 break;
                             }
-                            else throw new Exception("Не совпадают параметры!");
+                            else return ErrorsType.ParseFailed;
                         }
                     case "Double":
                         {
@@ -162,7 +174,7 @@ namespace TwitchChatBot.Core.Module
                                 i++;
                                 break;
                             }
-                            else throw new Exception("Не совпадают параметры!");
+                            else return ErrorsType.ParseFailed;
                         }
                     case "Boolean":
                         {
@@ -172,7 +184,7 @@ namespace TwitchChatBot.Core.Module
                                 i++;
                                 break;
                             }
-                            else throw new Exception("Не совпадают параметры!");
+                            else return ErrorsType.ParseFailed;
                         }
                     case "Object":
                         {
@@ -182,12 +194,14 @@ namespace TwitchChatBot.Core.Module
                         }
                     default:
                         {
-                            throw new Exception($"Не совпадают параметры! {_methodparams[i].ParameterType.Name}");
+                            return ErrorsType.ParseFailed;
                         }
                 }
 
                 name = name.Substring(nextsym, name.Length - nextsym);
             }
+
+            return ErrorsType.Successful;
         }
     }
 }

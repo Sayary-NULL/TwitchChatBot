@@ -1,6 +1,7 @@
 ﻿using System;
 using TwitchChatBot.Module;
 using TwitchChatBot.BotAPI;
+using System.Threading;
 
 namespace TwitchChatBot
 {
@@ -9,6 +10,9 @@ namespace TwitchChatBot
         static void Main(string[] args)
         {
             ConstVaribtls.Bot = new TwitchBot();
+
+            Thread.Sleep(1000);
+            ConstVaribtls.Message.StartThread();
 
             Console.ReadLine();
         }

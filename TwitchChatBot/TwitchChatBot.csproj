@@ -155,8 +155,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Atribute\Command.cs" />
-    <Compile Include="Atribute\OnlyModeratorAttribute.cs" />
+    <Compile Include="Attribute\OnlyOnBot.cs" />
+    <Compile Include="Core\Attribute\AliasAttribute.cs" />
+    <Compile Include="Core\Attribute\Command.cs" />
+    <Compile Include="Attribute\OnlyModeratorAttribute.cs" />
     <Compile Include="Core\Attribute\PreconditionAttribute.cs" />
     <Compile Include="Base\CodeConnect.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -165,11 +167,13 @@
     </Compile>
     <Compile Include="BotAPI\TwitchBot.cs" />
     <Compile Include="Core\Interface\ICommandContext.cs" />
-    <Compile Include="Core\Module\PreconditionResult.cs" />
+    <Compile Include="Core\Result\ErrorsType.cs" />
+    <Compile Include="Core\Result\PreconditionResult.cs" />
     <Compile Include="Module\AdminCommand.cs" />
     <Compile Include="Core\Module\CommandContext.cs" />
     <Compile Include="Core\Module\CommandServes.cs" />
     <Compile Include="Module\ConstVaribtls.cs" />
+    <Compile Include="Module\ThreadClass.cs" />
     <Compile Include="Module\UsersCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
