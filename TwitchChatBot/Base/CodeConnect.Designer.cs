@@ -61,6 +61,15 @@ namespace TwitchChatBot.Base {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на 529r052cwq3euy4ib1fqs2s0wmha57.
+        /// </summary>
+        internal static string Cliend_ID {
+            get {
+                return ResourceManager.GetString("Cliend-ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на LegionKun_.
         /// </summary>
         internal static string NameBot {

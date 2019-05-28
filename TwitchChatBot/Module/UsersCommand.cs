@@ -2,6 +2,8 @@
 using TwitchChatBot.Attribute;
 using TwitchChatBot.Core.Module;
 using TwitchChatBot.Core.Attribute;
+using TwitchChatBot.JsonModule;
+using System.Diagnostics;
 
 namespace TwitchChatBot.Module
 {
@@ -20,6 +22,7 @@ namespace TwitchChatBot.Module
             text += "!discord - дискорд сервер \"Шарового легиона\"\r\n";
             text += "!game - игра в которую мы сейчас играем\r\n";
             text += "!конфа - время до конфы\r\n";
+            text += "!uptime - время трансляции стрима\r\n";
             text += "!help - начнем рекурсиююююю)\r\n";
 
             if (Context.IsModerator)
@@ -126,6 +129,34 @@ namespace TwitchChatBot.Module
             }
 
             SendMessage($"До конфы осталось {StrockDay} {hour} часов {minut} минут");
+        }
+
+        [Command("uptime")]
+        public void UpTime()
+        {
+            Streams rez = ConstVaribtls.GetRequest<Streams>($"streams/95844270");
+
+            if(rez == null)
+            {
+                SendMessage($"{Context.Username}, стрим не запущен!");
+            }
+            else
+            {
+                TimeSpan date = DateTime.UtcNow - rez.stream.created_at;
+                SendMessage($"{Context.Username}, {date.Hours}:{date.Minutes}:{date.Seconds}");
+            }
+        }
+
+        [Command("test"), OnlyOwner]
+        public void Test()
+        {
+            //Clip rez = ConstVaribtls.GetRequest<Clip>("clips/ThoughtfulSlickDaikonSaltBae");
+            Streams rez = ConstVaribtls.GetRequest<Streams>("streams/69310071");
+            if (rez != null)
+            {
+                SendMessage($"ok");
+            }
+            else SendMessage("noooo");
         }
     }
 }

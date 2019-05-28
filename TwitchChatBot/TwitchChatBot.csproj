@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attribute\OnlyOnBot.cs" />
+    <Compile Include="Attribute\OnlyOwner.cs" />
     <Compile Include="Core\Attribute\AliasAttribute.cs" />
     <Compile Include="Core\Attribute\Command.cs" />
     <Compile Include="Attribute\OnlyModeratorAttribute.cs" />
@@ -169,6 +170,15 @@
     <Compile Include="Core\Interface\ICommandContext.cs" />
     <Compile Include="Core\Result\ErrorsType.cs" />
     <Compile Include="Core\Result\PreconditionResult.cs" />
+    <Compile Include="JsonModule\Broadcaster.cs" />
+    <Compile Include="JsonModule\Channel.cs" />
+    <Compile Include="JsonModule\Clip.cs" />
+    <Compile Include="JsonModule\Curator.cs" />
+    <Compile Include="JsonModule\Links.cs" />
+    <Compile Include="JsonModule\Preview.cs" />
+    <Compile Include="JsonModule\Stream.cs" />
+    <Compile Include="JsonModule\Thumbnails.cs" />
+    <Compile Include="JsonModule\Vod.cs" />
     <Compile Include="Module\AdminCommand.cs" />
     <Compile Include="Core\Module\CommandContext.cs" />
     <Compile Include="Core\Module\CommandServes.cs" />
