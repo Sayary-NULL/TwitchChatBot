@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+#users file ignore
+TwitchChatBot/Base
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
