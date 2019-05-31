@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TwitchLib.Client.Events;
-using TwitchChatBot.Core.Interface;
+using TwitchCoreAPI.Core.Interface;
+using TwitchCoreAPI.Core.Result;
 using TwitchLib.Client;
-using TwitchChatBot.Core.Result;
+using TwitchLib.Client.Events;
 
-namespace TwitchChatBot.Core.Module
+namespace TwitchCoreAPI.Core.Module
 {
     public class CommandServes
     {
@@ -29,9 +29,9 @@ namespace TwitchChatBot.Core.Module
 
         public ErrorsReturnType Invoke(int argpos, TwitchClient cl, OnMessageReceivedArgs e)
         {
-            var CommantAttribute = typeof(TwitchChatBot.Core.Attribute.Command);
-            var AliasAttribute = typeof(TwitchChatBot.Core.Attribute.AliasAttribute);
-            var PrecondAttribute = typeof(TwitchChatBot.Core.Attribute.PreconditionAttribute);
+            var CommantAttribute = typeof(TwitchCoreAPI.Core.Attribute.Command);
+            var AliasAttribute = typeof(TwitchCoreAPI.Core.Attribute.AliasAttribute);
+            var PrecondAttribute = typeof(TwitchCoreAPI.Core.Attribute.PreconditionAttribute);
 
             int poz = e.ChatMessage.Message.IndexOf(' ');
             poz = poz < 0 ? e.ChatMessage.Message.Length - 1 : poz - 1;
@@ -51,21 +51,21 @@ namespace TwitchChatBot.Core.Module
                     var type = attrib.GetType();
                     if(type == CommantAttribute)
                     {
-                        var at = attrib as TwitchChatBot.Core.Attribute.Command;
+                        var at = attrib as TwitchCoreAPI.Core.Attribute.Command;
                         if (at.NameCommand == NameMethods)
                             CommandName |= true;
                         else CommandName &= false;
                     }
                     else if(type == AliasAttribute)
                     {
-                        var at = attrib as TwitchChatBot.Core.Attribute.AliasAttribute;
+                        var at = attrib as TwitchCoreAPI.Core.Attribute.AliasAttribute;
                         if (at.NameAlias == NameMethods)
                             AliasName = true;
                     }
                     else if(type.BaseType == PrecondAttribute)
                     {
                         PreconditionCon = false;
-                        var at = attrib as TwitchChatBot.Core.Attribute.PreconditionAttribute;
+                        var at = attrib as TwitchCoreAPI.Core.Attribute.PreconditionAttribute;
                         Presult = at.CheckPermissions(e);
                         if (Presult.res == PreconditionResult.Result.Successfully)
                             PreconditionCon = true;

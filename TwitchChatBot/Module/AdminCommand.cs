@@ -1,6 +1,6 @@
 ﻿using TwitchChatBot.Attribute;
-using TwitchChatBot.Core.Module;
-using TwitchChatBot.Core.Attribute;
+using TwitchCoreAPI.Core.Module;
+using TwitchCoreAPI.Core.Attribute;
 
 namespace TwitchChatBot.Module
 {
@@ -28,13 +28,6 @@ namespace TwitchChatBot.Module
                 SendMessage("Я работаю!");
             }
             else SendMessage("Я сплю!");
-        }
-
-        [Command("setgame"), OnlyModerator]
-        public void SetGame(string text)
-        {
-            ConstVaribtls.ReferentceGames = text;
-            SendMessage("Игра установлена!");
         }
 
         [Command("версия"), OnlyModerator]

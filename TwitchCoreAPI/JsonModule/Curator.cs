@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TwitchChatBot.JsonModule
+namespace TwitchCoreAPI.JsonModule
 {
     public class Curator
     {

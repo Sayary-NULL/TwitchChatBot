@@ -1,9 +1,8 @@
 ﻿using System;
 using TwitchChatBot.Attribute;
-using TwitchChatBot.Core.Module;
-using TwitchChatBot.Core.Attribute;
-using TwitchChatBot.JsonModule;
-using System.Diagnostics;
+using TwitchCoreAPI.Core.Module;
+using TwitchCoreAPI.Core.Attribute;
+using TwitchCoreAPI.JsonModule;
 
 namespace TwitchChatBot.Module
 {
@@ -40,11 +39,14 @@ namespace TwitchChatBot.Module
         [Command("game"), OnlyOnBot]
         public void Game()
         {
-            if (ConstVaribtls.ReferentceGames == "")
+            Streams stream = ConstVaribtls.GetRequest<Streams>("streams/95844270");
+            if (stream.stream == null)
             {
-                SendMessage("Игра не установлена!");
+                SendMessage($"{Context.Username}, стрим не запущен!");
+                return;
             }
-            else SendMessage($"Мы играем в {ConstVaribtls.ReferentceGames}");
+
+            SendMessage($"Мы играем в {stream.stream.game}");
         }
 
         [Command("конфа"), OnlyOnBot]
@@ -131,12 +133,12 @@ namespace TwitchChatBot.Module
             SendMessage($"До конфы осталось {StrockDay} {hour} часов {minut} минут");
         }
 
-        [Command("uptime")]
+        [Command("uptime"), OnlyOnBot]
         public void UpTime()
         {
-            Streams rez = ConstVaribtls.GetRequest<Streams>($"streams/95844270");
+            Streams rez = ConstVaribtls.GetRequest<Streams>($"streams/69310071");
 
-            if(rez == null)
+            if(rez.stream == null)
             {
                 SendMessage($"{Context.Username}, стрим не запущен!");
             }
@@ -152,9 +154,9 @@ namespace TwitchChatBot.Module
         {
             //Clip rez = ConstVaribtls.GetRequest<Clip>("clips/ThoughtfulSlickDaikonSaltBae");
             Streams rez = ConstVaribtls.GetRequest<Streams>("streams/69310071");
-            if (rez != null)
+            if (rez.stream != null)
             {
-                SendMessage($"ok");
+                SendMessage($"ok {rez.stream.channel._id}");
             }
             else SendMessage("noooo");
         }

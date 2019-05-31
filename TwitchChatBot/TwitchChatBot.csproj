@@ -157,31 +157,14 @@
   <ItemGroup>
     <Compile Include="Attribute\OnlyOnBot.cs" />
     <Compile Include="Attribute\OnlyOwner.cs" />
-    <Compile Include="Core\Attribute\AliasAttribute.cs" />
-    <Compile Include="Core\Attribute\Command.cs" />
     <Compile Include="Attribute\OnlyModeratorAttribute.cs" />
-    <Compile Include="Core\Attribute\PreconditionAttribute.cs" />
     <Compile Include="Base\CodeConnect.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CodeConnect.resx</DependentUpon>
     </Compile>
     <Compile Include="BotAPI\TwitchBot.cs" />
-    <Compile Include="Core\Interface\ICommandContext.cs" />
-    <Compile Include="Core\Result\ErrorsType.cs" />
-    <Compile Include="Core\Result\PreconditionResult.cs" />
-    <Compile Include="JsonModule\Broadcaster.cs" />
-    <Compile Include="JsonModule\Channel.cs" />
-    <Compile Include="JsonModule\Clip.cs" />
-    <Compile Include="JsonModule\Curator.cs" />
-    <Compile Include="JsonModule\Links.cs" />
-    <Compile Include="JsonModule\Preview.cs" />
-    <Compile Include="JsonModule\Stream.cs" />
-    <Compile Include="JsonModule\Thumbnails.cs" />
-    <Compile Include="JsonModule\Vod.cs" />
     <Compile Include="Module\AdminCommand.cs" />
-    <Compile Include="Core\Module\CommandContext.cs" />
-    <Compile Include="Core\Module\CommandServes.cs" />
     <Compile Include="Module\ConstVaribtls.cs" />
     <Compile Include="Module\ThreadClass.cs" />
     <Compile Include="Module\UsersCommand.cs" />
@@ -203,6 +186,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CodeConnect.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TwitchCoreAPI\TwitchCoreAPI.csproj">
+      <Project>{f2c88c6f-f59f-4c6e-9f2f-c4052f96848e}</Project>
+      <Name>TwitchCoreAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

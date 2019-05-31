@@ -1,5 +1,5 @@
-﻿using TwitchChatBot.Core.Attribute;
-using TwitchChatBot.Core.Result;
+﻿using TwitchCoreAPI.Core.Attribute;
+using TwitchCoreAPI.Core.Result;
 using TwitchLib.Client.Events;
 
 namespace TwitchChatBot.Attribute
@@ -14,7 +14,6 @@ namespace TwitchChatBot.Attribute
                 res.Successfully();
             }
             else res.Unsuccessful("Нет доступа!");
-
             return res;
         }
     }

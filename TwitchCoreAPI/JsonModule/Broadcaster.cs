@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TwitchChatBot.JsonModule
+namespace TwitchCoreAPI.JsonModule
 {
     public class Broadcaster
     {
@@ -8,15 +8,15 @@ namespace TwitchChatBot.JsonModule
         public string Id { get; set; }
 
         [JsonProperty("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty("display_name")]
-        public string display_name { get; set; }
+        public string Display_name { get; set; }
 
         [JsonProperty("channel_url")]
-        public string channel_url { get; set; }
+        public string Channel_url { get; set; }
 
         [JsonProperty("logo")]
-        public string logo { get; set; }
+        public string Logo { get; set; }
     }
 }

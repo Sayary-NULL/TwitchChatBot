@@ -3,7 +3,7 @@ using TwitchChatBot.Module;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchChatBot.Core.Result;
+using TwitchCoreAPI.Core.Result;
 
 namespace TwitchChatBot.BotAPI
 {

@@ -7,7 +7,7 @@ namespace TwitchChatBot
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             ConstVaribtls.Bot = new TwitchBot();
 

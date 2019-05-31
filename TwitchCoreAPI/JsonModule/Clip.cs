@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
-namespace TwitchChatBot.JsonModule
+namespace TwitchCoreAPI.JsonModule
 {
     class Clip
     {

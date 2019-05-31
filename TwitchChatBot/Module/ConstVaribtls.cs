@@ -3,7 +3,7 @@ using NLog;
 using System.IO;
 using System.Net;
 using TwitchChatBot.BotAPI;
-using TwitchChatBot.Core.Module;
+using TwitchCoreAPI.Core.Module;
 
 namespace TwitchChatBot.Module
 {
@@ -52,7 +52,7 @@ namespace TwitchChatBot.Module
             {
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
                 _logger.Error($"Статусный код ошибки: {(int)webResponse.StatusCode} - {webResponse.StatusCode}");
-                return default(T);
+                return default;
             }
         }
     }

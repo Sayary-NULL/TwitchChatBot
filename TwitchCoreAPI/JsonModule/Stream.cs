@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace TwitchChatBot.JsonModule
+namespace TwitchCoreAPI.JsonModule
 {
     public class Stream
     {

@@ -11,7 +11,7 @@
 *.sln.docstates
 
 #users file ignore
-TwitchChatBot/Base
+TwitchChatBot/Base/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
