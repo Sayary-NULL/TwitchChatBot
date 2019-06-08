@@ -13,6 +13,7 @@ namespace TwitchChatBot
 
             Thread.Sleep(1000);
             ConstVaribtls.Message.StartThread();
+            ConstVaribtls.Message.StartWorckBot();
 
             Console.ReadLine();
         }

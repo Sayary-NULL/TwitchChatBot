@@ -86,5 +86,14 @@ namespace TwitchChatBot.Base {
                 return ResourceManager.GetString("Oauth", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на OAuth 5blup928ol0nku348udw4qppektcaq.
+        /// </summary>
+        internal static string Oauth2 {
+            get {
+                return ResourceManager.GetString("Oauth2", resourceCulture);
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace TwitchCoreAPI.JsonModule
 {
-    class Clip
+    public class Clip
     {
         [JsonProperty("slug")]
         public string slug { get; set; }

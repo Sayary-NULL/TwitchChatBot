@@ -1,16 +1,49 @@
 ﻿using System;
 using System.Threading;
+using TwitchCoreAPI.JsonModule;
 
 namespace TwitchChatBot.Module
 {
     public class ThreadClass
     {
         Thread _send = new Thread(SendMessage);
+        Thread _WorckBot = new Thread(WorckBot);
+
+        public void StartWorckBot()
+        {
+            _WorckBot.Start();
+        }
+
+        private static void WorckBot(object obj)
+        {
+            while (!ConstVaribtls.Bot.client.IsConnected) ;
+
+            while (true)
+            {
+                var res = ConstVaribtls.GetRequest<Streams>("streams/95844270");
+
+                if (res.stream == null && ConstVaribtls.StartBot)
+                {
+                    ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], "Стрим выключен, и я пойду спать");
+                    ConstVaribtls.StartBot = false;
+                    ConstVaribtls._logger.Info("Automatic; Выключение бота");
+                }
+                else if(res.stream != null && !ConstVaribtls.StartBot)
+                {
+                    ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], "Стрим запущен, я иду работать!");
+                    ConstVaribtls.StartBot = true;
+                    ConstVaribtls._logger.Info("Automatic; Включение бота");
+                }
+
+                Thread.Sleep(60000);
+            }
+        }
 
         public void StartThread()
         {
             _send.Start();
         }
+
         private static void SendMessage(Object obj)
         {
             while (!ConstVaribtls.Bot.client.IsConnected) ;

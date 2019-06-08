@@ -136,9 +136,9 @@ namespace TwitchChatBot.Module
         [Command("uptime"), OnlyOnBot]
         public void UpTime()
         {
-            Streams rez = ConstVaribtls.GetRequest<Streams>($"streams/69310071");
+            Streams rez = ConstVaribtls.GetRequest<Streams>($"streams/95844270");// 
 
-            if(rez.stream == null)
+            if (rez.stream == null)
             {
                 SendMessage($"{Context.Username}, стрим не запущен!");
             }
@@ -152,11 +152,13 @@ namespace TwitchChatBot.Module
         [Command("test"), OnlyOwner]
         public void Test()
         {
-            //Clip rez = ConstVaribtls.GetRequest<Clip>("clips/ThoughtfulSlickDaikonSaltBae");
-            Streams rez = ConstVaribtls.GetRequest<Streams>("streams/69310071");
-            if (rez.stream != null)
+            //Clip rez = ConstVaribtls.GetRequest<Clip>("clips/PluckySneakyAsteriskStinkyCheese");
+            //Streams rez = ConstVaribtls.GetRequest<Streams>("streams/95844270");
+            //string rez = ConstVaribtls.GetRequest($"channels/{Context.Channel}/subscriptions");
+            string rez = ConstVaribtls.GetRequest($"oauth2/token");
+            if (rez != null)
             {
-                SendMessage($"ok {rez.stream.channel._id}");
+                SendMessage($"ok");
             }
             else SendMessage("noooo");
         }

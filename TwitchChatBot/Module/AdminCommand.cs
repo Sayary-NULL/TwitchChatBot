@@ -9,15 +9,30 @@ namespace TwitchChatBot.Module
         [Command("start"), OnlyModerator]
         public void StartBot()
         {
-            ConstVaribtls.StartBot = true;
-            SendMessage("Привет ребята! Я бот \"Шарового Легиона\"! Приятного просмотра");
+            SendMessage($"{Context.Username}, бот переведен на функцию автоматического влючения/выключения");
+            return;
+
+            if (!ConstVaribtls.StartBot)
+            {
+                ConstVaribtls.StartBot = true;
+                SendMessage("Привет ребята! Я бот \"Шарового Легиона\"! Приятного просмотра");
+            }
+            else SendMessage($"{Context.Username}, я уже включен");
         }
 
         [Command("stop"), OnlyModerator]
         public void StopBot()
         {
-            ConstVaribtls.StartBot = false;
-            SendMessage("Получена команда остановки работы!");
+            SendMessage($"{Context.Username}, бот переведен на функцию автоматического влючения/выключения");
+            return;
+
+            if (ConstVaribtls.StartBot)
+            {
+                ConstVaribtls.StartBot = false;
+                SendMessage("Получена команда остановки работы!");
+            }
+            else SendMessage($"{Context.Username}, я уже выключен");
+
         }
 
         [Command("status"), OnlyModerator]

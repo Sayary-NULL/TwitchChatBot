@@ -15,7 +15,7 @@ namespace TwitchChatBot.BotAPI
             ConnectionCredentials credentials = new ConnectionCredentials(Base.CodeConnect.NameBot, Base.CodeConnect.Oauth);
 
             client = new TwitchClient();
-            client.Initialize(credentials, "sharonvoice");
+            client.Initialize(credentials,"sharonvoice");
 
             client.OnLog += Client_OnLog;
             client.OnJoinedChannel += Client_OnJoinedChannel;

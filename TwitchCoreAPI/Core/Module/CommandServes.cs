@@ -12,7 +12,7 @@ namespace TwitchCoreAPI.Core.Module
     public class CommandServes
     {
         Type ClassType;
-        Object MyClassObject;
+        Object MyClassObject = null;
 
         public CommandServes()
         {
@@ -81,6 +81,7 @@ namespace TwitchCoreAPI.Core.Module
                     if (_params.Count == method.GetParameters().Count())
                     {
                         ((ICommandContext)MyClassObject).SetContext(e, cl);
+                        
                         method.Invoke(MyClassObject, _params.ToArray());
                         return new ErrorsReturnType(ErrorsType.Successful, "");
                     }
