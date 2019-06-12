@@ -9,6 +9,7 @@ namespace TwitchChatBot
     {
         static void Main()
         {
+            ConstVaribtls.Init();
             ConstVaribtls.Bot = new TwitchBot();
 
             Thread.Sleep(1000);

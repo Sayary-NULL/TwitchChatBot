@@ -4,6 +4,7 @@ using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchCoreAPI.Core.Result;
+using System.Data.SqlClient;
 
 namespace TwitchChatBot.BotAPI
 {
@@ -48,6 +49,70 @@ namespace TwitchChatBot.BotAPI
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
+            CallingCommand(e);
+
+            if (!ConstVaribtls.StartBot && !ConstVaribtls.IsDebuge)
+                    return;
+
+            if (GetNelloUserName(e.ChatMessage.Username))
+                client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"К нам пришел {e.ChatMessage.Username}. Привет, привет!");
+        }
+
+        private bool GetNelloUserName(string name)
+        {
+            SqlParameter InUserName = new SqlParameter
+            {
+                ParameterName = "@InUserName",
+                DbType = System.Data.DbType.String,
+                Value = name
+            };
+
+            using (SqlConnection conect = new SqlConnection(ConstVaribtls.DateBase.ConnectionStringKey))
+            {
+                try
+                {
+                    conect.Open();
+
+                    using (SqlCommand command = new SqlCommand("GetHelloUsers", conect) { CommandType = System.Data.CommandType.StoredProcedure })
+                    {
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                string username = reader.GetString(0);
+                                bool iscome = reader.GetBoolean(1);
+                                username = username.TrimStart(' ').TrimEnd(' ');
+                                if (name == username)
+                                {
+                                    if (iscome)
+                                        return false;
+
+                                    reader.Close();
+                                    using (SqlCommand command2 = new SqlCommand("sp_SetComeUsers", conect) { CommandType = System.Data.CommandType.StoredProcedure })
+                                    {
+                                        command2.Parameters.Add(InUserName);
+                                        command2.ExecuteNonQuery();
+                                    }
+                                    return true;
+                                }
+                            }
+                            reader.Close();
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    ConstVaribtls._logger.Error(e);
+                }
+
+                return false;
+            }
+        }
+
+        private void CallingCommand(OnMessageReceivedArgs send)
+        {
             int argpos = 0;
 #if DEBUG
             string symv = "$";
@@ -55,12 +120,12 @@ namespace TwitchChatBot.BotAPI
             string symv = "!";
 #endif
 
-            if (HasStringPrefix(e.ChatMessage.Message, symv, ref argpos))
+            if (HasStringPrefix(send.ChatMessage.Message, symv, ref argpos))
             {
-                var res1 = ConstVaribtls._UserCommandServes.Invoke(argpos, client, e);
-                var res2 = ConstVaribtls._AdminCommandServers.Invoke(argpos, client, e);
+                var res1 = ConstVaribtls._UserCommandServes.Invoke(argpos, client, send);
+                var res2 = ConstVaribtls._AdminCommandServers.Invoke(argpos, client, send);
 
-                if(res1.Result != ErrorsType.Successful)
+                if (res1.Result != ErrorsType.Successful)
                 {
                     switch (res1.Result)
                     {
@@ -103,7 +168,7 @@ namespace TwitchChatBot.BotAPI
                         case ErrorsType.ParseFailed:
                             {
                                 ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Ошибка: Неправильные аргументы!");
-                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}, сообщение: '{e.ChatMessage.Message}'");
+                                ConstVaribtls._logger.Error($"Ошибка: {res2.ErrorsMessage}, сообщение: '{send.ChatMessage.Message}'");
                                 break;
                             }
                         case ErrorsType.Unsuccessful:
@@ -132,7 +197,7 @@ namespace TwitchChatBot.BotAPI
                     }
                 }
 
-                if(res1.Result == ErrorsType.ObjectNotFound && res2.Result == ErrorsType.ObjectNotFound)
+                if (res1.Result == ErrorsType.ObjectNotFound && res2.Result == ErrorsType.ObjectNotFound)
                 {
                     ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], $"Команда не найдена!");
                     ConstVaribtls._logger.Error($"Ошибка: {res1.ErrorsMessage} : {res2.ErrorsMessage}");

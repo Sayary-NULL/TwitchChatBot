@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading;
 using TwitchCoreAPI.JsonModule;
 
@@ -27,12 +28,29 @@ namespace TwitchChatBot.Module
                     ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], "Стрим выключен, и я пойду спать");
                     ConstVaribtls.StartBot = false;
                     ConstVaribtls._logger.Info("Automatic; Выключение бота");
+
+                    using (SqlConnection conect = new SqlConnection(ConstVaribtls.DateBase.ConnectionStringKey))
+                    {
+                        try
+                        {
+                            conect.Open();
+                            using (SqlCommand command = new SqlCommand("sp_SetNotComeUsers", conect) { CommandType = System.Data.CommandType.StoredProcedure })
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                            ConstVaribtls._logger.Error(e);
+                        }
+                    }
                 }
                 else if(res.stream != null && !ConstVaribtls.StartBot)
                 {
                     ConstVaribtls.Bot.client.SendMessage(ConstVaribtls.Bot.client.JoinedChannels[0], "Стрим запущен, я иду работать!");
                     ConstVaribtls.StartBot = true;
                     ConstVaribtls._logger.Info("Automatic; Включение бота");
+                    ConstVaribtls.ComeSayary = false;
                 }
 
                 Thread.Sleep(60000);

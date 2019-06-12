@@ -2,11 +2,20 @@
 using NLog;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using TwitchChatBot.BotAPI;
 using TwitchCoreAPI.Core.Module;
 
 namespace TwitchChatBot.Module
 {
+    [DataContract]
+    public class DateBaseJSON
+    {
+        [DataMember]
+        public string ConnectionStringKey = "";
+    }
+
     public static class ConstVaribtls
     {
         public static ThreadClass Message = new ThreadClass();
@@ -17,6 +26,7 @@ namespace TwitchChatBot.Module
         public static bool IsDebuge = false;
 #endif
         public static bool StartBot = false;
+        public static bool ComeSayary = false;
 
         public static string ReferentceGames = "";
         public static string VersionOfTheBot = "0.0.13D";
@@ -25,6 +35,18 @@ namespace TwitchChatBot.Module
         public static CommandServes _UserCommandServes = new CommandServes();
         public static CommandServes _AdminCommandServers = new CommandServes();
         public static TwitchBot Bot;
+
+        public static DateBaseJSON DateBase;
+
+        public static void Init()
+        {
+            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(DateBaseJSON));
+
+            using (FileStream fs = new FileStream(@"Base/DateBase.json", FileMode.Open))
+            {
+                DateBase = jsonFormatter.ReadObject(fs) as DateBaseJSON;
+            }
+        }
 
         public static string GetRequest(string url)
         {
